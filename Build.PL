@@ -21,7 +21,7 @@ my $builder = Module::Build->new(
     },
     meta_merge => {
         resources => {
-            repository => 'https://github.com/grishkovelli/Mojolicious-Plugin-ModeSwitcher',
+            repository => 'https://github.com/grishkovelli/Mojolicious-Plugin-AdvancedMod',
         }
     },
     add_to_cleanup     => [ 'Mojolicious-Plugin-AdvancedMod-*' ],
