@@ -1,58 +1,69 @@
 package Mojolicious::Plugin::AdvancedMod::HashedParams;
 
 sub init {
-  my ( $self, $permit ) = @_;
+  {
+    my ( $self, @permit ) = @_;
 
-  if ( !$self->stash( 'hparams' ) ) {
-    my $hprms = $self->req->params->to_hash;
-    my $index = 0;
-    my @array;
+    if ( !$self->stash( 'hparams' ) ) {
+      my $hprms = $self->req->params->to_hash;
+      my $index = 0;
+      my @array;
 
-    foreach my $p ( keys %$hprms ) {
-      my $key = $p;
-      my $val = $hprms->{$p};
+      foreach my $p ( keys %$hprms ) {
+        my $key = $p;
+        my $val = $hprms->{$p};
 
-      $key =~ s/[^\]\[0-9a-zA-Z_]//g;
-      $key =~ s/\[{2,}/\[/g;
-      $key =~ s/\]{2,}/\]/g;
+        $key =~ s/[^\]\[0-9a-zA-Z_]//g;
+        $key =~ s/\[{2,}/\[/g;
+        $key =~ s/\]{2,}/\]/g;
 
-      my @list;
-      foreach my $n ( split /[\[\]]/, $key ) {
-        push @list, $n if length( $n ) > 0;
-      }
-
-      map $array[$index] .= "{$list[$_]}", 0 .. $#list;
-
-      $array[$index] .= " = '$val';";
-      $index++;
-    }
-
-    my $code = 'my $h = {};';
-    map { $code .= "\$h->$_" } @array;
-    $code .= '$h;';
-
-    my $ret = eval $code;
-
-    if ( $@ ) {
-      $self->stash( hparams       => {} );
-      $self->stash( hparams_error => $@ );
-      return $self->stash( 'hparams' );
-    }
-
-    if ( %$ret ) {
-      if ( $permit ) {
-        foreach my $k ( keys %$ret ) {
-          delete $ret->{$k} unless $k ~~ @$permit;
+        my @list;
+        foreach my $n ( split /[\[\]]/, $key ) {
+          push @list, $n if length( $n ) > 0;
         }
+
+        map $array[$index] .= "{$list[$_]}", 0 .. $#list;
+
+        if ( ref( $val ) ne 'ARRAY' ) {
+          $array[$index] .= " = '$val';";
+        }
+        else {
+          my @ar = @$val;
+          undef $val;
+          foreach my $v ( @ar ) { $val .= "'$v',"; }
+          $val =~ s/,$//;
+          $array[$index] .= " = [$val];";
+        }
+        $index++;
       }
 
-      $self->stash( hparams => $ret );
+      my $code = 'my $h = {};';
+      map { $code .= "\$h->$_" } @array;
+      $code .= '$h;';
+
+      my $ret = eval $code;
+
+      if ( $@ ) {
+        $self->stash( hparams       => {} );
+        $self->stash( hparams_error => $@ );
+        return $self->stash( 'hparams' );
+      }
+
+      if ( %$ret ) {
+        if ( @permit ) {
+          foreach my $k ( keys %$ret ) {
+            delete $ret->{$k} unless $k ~~ @permit;
+          }
+        }
+
+        $self->stash( hparams => $ret );
+      }
     }
+    else {
+      $self->stash( hparams => {} );
+    }
+    return $self->stash( 'hparams' );
   }
-  else {
-    $self->stash( hparams => {} );
-  }
-  return $self->stash( 'hparams' );
 }
 
 1;
