@@ -80,7 +80,6 @@ sub new_controller {
   $opts{handler} ||= $self->app->renderer->default_handler;
   $opts{actions} ||= \@actions;
 
-  # controller
   my $controller = "${class}::Controllers::$name";
   $self->render_to_rel_file(
     'controller',
@@ -90,11 +89,9 @@ sub new_controller {
     }
   );
 
-  # helper
   my $helper = "${class}::Helpers::$name";
   $self->render_to_rel_file( 'helper', "lib/" . ( class_to_path $helper ), $helper );
 
-  # view's by actions
   foreach my $action ( @{ $opts{actions} } ) {
     next if $action =~ /(create|update|destroy)/;
     $self->write_rel_file( "templates/$name/$action.html.$opts{handler}", "It's action #$action" );
@@ -121,7 +118,6 @@ sub new_resource {
   $opts{actions} ||= \@actions;
 
   foreach my $name ( @_ ) {
-    # Controller
     my $controller = "${class}::Controllers::$name";
     $self->render_to_rel_file(
       'controller',
@@ -131,15 +127,12 @@ sub new_resource {
       }
     );
 
-    # Model
     my $model = "${class}::Models::$name";
     $self->render_to_rel_file( 'model', "lib/" . ( class_to_path $model ), $model );
 
-    # Helper
     my $helper = "${class}::Helpers::$name";
     $self->render_to_rel_file( 'helper', "lib/" . ( class_to_path $helper ), $helper );
 
-    # View's
     foreach my $action ( @{ $opts{actions} } ) {
       next if $action =~ /(create|update|destroy)/;
       $self->write_rel_file( "templates/$name/$action.html.$handler", "It's action #$action" );
