@@ -1,1 +1,54 @@
-Mojolicious-Plugin-AdvancedMod
+=encoding utf8
+
+=head1 NAME
+
+Mojolicious::Plugin::AdvancedMod - More buns for Mojolicioius
+
+=head1 SYNOPSIS
+
+  # Mojolicious
+  $self->plugin('Mojolicious::Plugin::AdvancedMod');
+
+  # Mojolicious::Lite
+  plugin 'Mojolicious::Plugin::AdvancedMod';
+
+=head1 SEE ALSO
+
+=over 2
+
+=item
+
+L<Mojolicious::Plugin::AdvancedMod::ActionFilter>
+
+=item
+
+L<Mojolicious::Plugin::AdvancedMod::HashedParams>
+
+=item
+
+L<Mojolicious::Plugin::AdvancedMod::ModeSwitcher>
+
+=item
+
+L<Mojolicious::Plugin::AdvancedMod::FormHelpers>
+
+=item
+
+L<Mojolicious::Command::am>
+
+=back
+
+=head1 AUTHOR
+
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2013, 2014
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut
