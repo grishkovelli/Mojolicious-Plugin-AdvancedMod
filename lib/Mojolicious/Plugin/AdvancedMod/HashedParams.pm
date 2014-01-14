@@ -68,8 +68,6 @@ sub init {
 
 1;
 
-__END__
-
 =encoding utf8
 
 =head1 NAME
@@ -92,15 +90,5 @@ Mojolicious::Plugin::AdvancedMod::HashedParams - Transformation request paramete
     # return all parameters in the hash
     $self->hparams();
   };
-
-=head1 AUTHOR
-
-Grishkovelli L<grishkovelli@gmail.com>
-
-=head1 COPYRIGHT
-
-Copyright (C) 2013, Grishkovelli.
-
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut

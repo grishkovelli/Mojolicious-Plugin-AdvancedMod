@@ -102,8 +102,6 @@ sub _load_file {
 
 1;
 
-__END__
-
 =encoding utf8
 
 =head1 NAME
@@ -150,15 +148,5 @@ If your configuration has B<static_path> or B<templates_path>, ModeSwitcher will
   );
   ...
   print self->stash( 'switch_config' )->{db_name};
-
-=head1 AUTHOR
-
-Grishkovelli L<grishkovelli@gmail.com>
-
-=head1 COPYRIGHT
-
-Copyright (C) 2013, Grishkovelli.
-
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut

@@ -60,7 +60,6 @@ sub _filter {
 
 1;
 
-__END__
 =encoding utf8
 
 =head1 NAME
@@ -108,16 +107,5 @@ $self->action_filter( filter_name => sub { ... } );
   [info] Applying before_filter is_auth for example#show
   [info] Applying after_filter test for example#show
   [debug] GET "/show".
-
-
-=head1 AUTHOR
-
-Grishkovelli L<grishkovelli@gmail.com>
-
-=head1 COPYRIGHT
-
-Copyright (C) 2013, Grishkovelli.
-
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut
