@@ -27,10 +27,9 @@ sub register {
     }
   );
 
-  Mojolicious::Plugin::AdvancedMod::FormHelpers::init( $app, \%helpers );
+  Mojolicious::Plugin::AdvancedMod::FormHelpers::multi_init( $app, \%helpers );
 
   # add helper's
-  my %only = ();
   if ( $conf->{only} ) {
     %only = map { $_ => 1 } @{ $conf->{only} };
   }

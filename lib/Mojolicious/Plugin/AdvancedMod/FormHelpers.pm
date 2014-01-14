@@ -1,6 +1,9 @@
 package Mojolicious::Plugin::AdvancedMod::FormHelpers;
 
-sub init {
+sub multi_init {
+  my ( $app, $helpers ) = @_;
+
+  $helpers->{bottom_to} = \&_botton_to;
 }
 
 sub _botton_to {
