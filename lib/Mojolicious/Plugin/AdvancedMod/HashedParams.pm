@@ -52,7 +52,7 @@ sub init {
       if ( %$ret ) {
         if ( @permit ) {
           foreach my $k ( keys %$ret ) {
-            delete $ret->{$k} unless $k ~~ @permit;
+            delete $ret->{$k} if grep( !/$k/, @permit );
           }
         }
 

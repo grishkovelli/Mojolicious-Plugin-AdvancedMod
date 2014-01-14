@@ -56,8 +56,8 @@ sub _load_package {
     if ( !$@ ) {
       my $ret = $pkg . "::";
       if ( $pkg =~ /^YAML/ ) { $ret .= 'Load'; }
-      elsif ( $pkg ~~ [ 'JSON::XS', 'JSON' ] ) { $ret .= 'decode_json'; }
-      else                                     { $ret .= 'decode'; }
+      elsif ( grep( /^$pkg$/, qw/JSON::XS JSON/ ) ) { $ret .= 'decode_json'; }
+      else                                          { $ret .= 'decode'; }
       return { err => 0, name => $ret };
     }
   }
