@@ -226,7 +226,20 @@ sub _cmd_opts_parsing {
   return %opts;
 }
 
-1;
+=head1 AUTHOR
+
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2013, 2014
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut
 
 __DATA__
 
@@ -260,7 +273,12 @@ sub startup {
   $self->app->renderer->default_handler( '<%= $h->{handler} %>' );
 
   my $r = $self->routes;
-
+  $r->namespaces( [
+    '<%= $h->{class} %>::Controllers',
+    '<%= $h->{class} %>::Models',
+    '<%= $h->{class} %>::Helpers'
+    ]
+  );
   $r->get('/')->to('app#index');
 }
 
@@ -323,3 +341,26 @@ my $t = Test::Mojo->new('<%= $class %>');
 $t->get_ok('/')->status_is(200)->content_like(qr/Mojolicious/i);
 
 done_testing();
+
+@@ copyright
+% my $h = shift;
+
+=encoding utf8
+
+=head1 NAME
+
+<%= $h->{package} %>
+
+=head1 AUTHOR
+
+<%= $h->{author} %>
+
+=head1 COPYRIGHT
+
+<%= $h->{copyright} %>
+
+=head1 LICENSE
+
+<%= $h->{lic} %>
+
+=cut
