@@ -3,44 +3,53 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use Mojolicious::Plugin::AdvancedMod::ActionFilter;
 use Mojolicious::Plugin::AdvancedMod::HashedParams;
-use Mojolicious::Plugin::AdvancedMod::ModeSwitcher;
+use Mojolicious::Plugin::AdvancedMod::Configurator;
 use Mojolicious::Plugin::AdvancedMod::FormHelpers;
 
-our $VERSION = '0.31';
+use DBI;
+
+our $VERSION = '0.33';
 
 sub register {
   my ( $plugin, $app, $conf ) = @_;
-  my ( %only, %helpers );
+  my ( $helpers, %only ) = {};
 
-  %helpers = (
-    action_filter => sub {
-      my ( $self, %filters ) = @_;
-      Mojolicious::Plugin::AdvancedMod::ActionFilter::init( $app, \%filters );
-    },
-    hparams => sub {
-      my ( $self, @permit ) = @_;
-      Mojolicious::Plugin::AdvancedMod::HashedParams::init( $self, @permit ? \@permit : '' );
-    },
-    switch_config => sub {
-      my ( $self, %args ) = @_;
-      Mojolicious::Plugin::AdvancedMod::ModeSwitcher::init( $app, \%args );
-    }
-  );
-
-  Mojolicious::Plugin::AdvancedMod::FormHelpers::multi_init( $app, \%helpers );
+  Mojolicious::Plugin::AdvancedMod::ActionFilter::init( $app, $helpers );
+  Mojolicious::Plugin::AdvancedMod::Configurator::init( $app, $helpers );
+  Mojolicious::Plugin::AdvancedMod::HashedParams::init( $app, $helpers );
+  Mojolicious::Plugin::AdvancedMod::FormHelpers::multi_init( $app, $helpers );
 
   # add helper's
   if ( $conf->{only} ) {
     %only = map { $_ => 1 } @{ $conf->{only} };
   }
 
-  foreach my $h ( keys %helpers ) {
+  foreach my $h ( keys %$helpers ) {
     if ( %only && !exists $only{$h} ) {
-      delete $helpers{$h};
+      delete $helpers->{$h};
       next;
     }
-    $app->helper( $h => $helpers{$h} );
+    $app->helper( $h => $helpers->{$h} );
     $app->log->debug( "** AdvancedMod load $h" );
+  }
+
+  # by am_config
+  if ( $app->defaults( 'am_config' ) ) {
+    my $am_cfg = $app->defaults( 'am_config' );
+
+    # add db helper's
+    foreach my $k ( keys %$am_cfg ) {
+      if ( $k eq 'db' || $k =~ /^db_\w+$/ ) {
+        $app->helper(
+          $k => sub {
+            return DBI->connect( @{ $am_cfg->{$k} }{qw/ dsn user password options /} );
+          }
+        );
+      }
+    }
+
+    # change 'secrets' key
+    $app->secrets( $am_cfg->{secrets} ) if $am_cfg->{secrets};
   }
 }
 
@@ -50,15 +59,12 @@ sub register {
 
 =head1 NAME
 
-Mojolicious::Plugin::AdvancedMod - More buns for Mojolicioius
+Mojolicious::Plugin::AdvancedMod - More buns for Mojolicious
 
 =head1 SYNOPSIS
 
-  # Mojolicious
-  $self->plugin('Mojolicious::Plugin::AdvancedMod');
-
-  # Mojolicious::Lite
-  plugin 'Mojolicious::Plugin::AdvancedMod';
+  # Load all AdvancedMod Plugins
+  $self->plugin('AdvancedMod');
 
 =head1 SEE ALSO
 
@@ -74,7 +80,7 @@ L<Mojolicious::Plugin::AdvancedMod::HashedParams>
 
 =item
 
-L<Mojolicious::Plugin::AdvancedMod::ModeSwitcher>
+L<Mojolicious::Plugin::AdvancedMod::Configurator>
 
 =item
 
@@ -83,6 +89,10 @@ L<Mojolicious::Plugin::AdvancedMod::FormHelpers>
 =item
 
 L<Mojolicious::Command::am>
+
+=item
+
+https://github.com/grishkovelli/Mojolicious-Plugin-AdvancedMod
 
 =back
 

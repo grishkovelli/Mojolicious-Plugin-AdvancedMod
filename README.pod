@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Mojolicious::Plugin::AdvancedMod - More buns for Mojolicioius
+Mojolicious::Plugin::AdvancedMod - More buns for Mojolicious
 
 =head1 SYNOPSIS
 

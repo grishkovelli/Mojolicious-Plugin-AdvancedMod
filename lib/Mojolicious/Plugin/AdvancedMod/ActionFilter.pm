@@ -1,23 +1,29 @@
 package Mojolicious::Plugin::AdvancedMod::ActionFilter;
 
 sub init {
-  my ( $app, $filters ) = @_;
+  my $app     = shift;
+  my $helpers = shift;
 
-  $app->defaults( action_filters => $filters );
+  $helpers->{action_filter} = sub {
+    my $self    = shift;
+    my %filters = @_;
+    
+    $self->app->defaults( action_filters => \%filters );
 
-  $app->hook(
-    before_dispatch => sub {
-      my $self = shift;
-      _filter( $self, 'BEFORE' );
-    }
-  );
+    $self->app->hook(
+      before_dispatch => sub {
+        my $self = shift;
+        _filter( $self, 'BEFORE' );
+      }
+    );
 
-  $app->hook(
-    after_dispatch => sub {
-      my $self = shift;
-      _filter( $self, 'AFTER' );
-    }
-  );
+    $self->app->hook(
+      after_dispatch => sub {
+        my $self = shift;
+        _filter( $self, 'AFTER' );
+      }
+    );
+  };
 }
 
 sub _filter {
@@ -46,11 +52,11 @@ sub _filter {
 
           if ( exists $subs->{$name} ) {
             $self->app->log->info(
-              "Applying " . lc( $type ) . "_filter $name for $patterns->{$pt}{controller}#$patterns->{$pt}{action}" );
+              "** ActionFilter: applying " . lc( $type ) . "_filter $name for $patterns->{$pt}{controller}#$patterns->{$pt}{action}" );
             $subs->{$name}->( $self );
           }
           else {
-            $self->app->log->error( "Filter $name not found" );
+            $self->app->log->error( "** ActionFilter: filter $name not found" );
           }
         }
       }
@@ -80,9 +86,9 @@ $self->action_filter( filter_name => sub { ... } );
 
     $self->plugin( 'Mojolicious::Plugin::ActionFilter' );
     my $r = $self->routes;
-    $r->namespaces( [ 'MyApp::Controllers', 'MyApp::Controllers::Example' ] );
-    $r->get( '/' )->to( 'example#welcome' );
-    $r->get( '/show' )->to( 'example#show' );
+    $r->namespaces( [ 'MyApp::Controllers', 'MyApp::Controllers::App' ] );
+    $r->get( '/' )->to( 'app#index' );
+    $r->get( '/show' )->to( 'app#show' );
     $self->action_filter(
       is_auth => sub { shift->render( text => "is_auth filter" ) },
       test    => sub { shift->render( text => "test before_filter" ); },
@@ -95,17 +101,30 @@ $self->action_filter( filter_name => sub { ... } );
 
   sub show {
     my ( $self, $filter, $action ) = @_;
-    $self->render( text => 'action show' );
+    $self->render( text => 'show action' );
   }
 
-  sub welcome {
+  sub index {
     my $self = shift;
-    $self->render( text => 'index' );
+    $self->render( text => 'index action' );
   }
   
   # Log
   [info] Applying before_filter is_auth for example#show
   [info] Applying after_filter test for example#show
   [debug] GET "/show".
+
+=head1 AUTHOR
+
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2013, 2014
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut

@@ -1,8 +1,12 @@
 package Mojolicious::Plugin::AdvancedMod::HashedParams;
 
 sub init {
-  {
-    my ( $self, @permit ) = @_;
+  my $app     = shift;
+  my $helpers = shift;
+
+  $helpers->{hparams} = sub {
+    my $self   = shift;
+    my @permit = @_;
 
     if ( !$self->stash( 'hparams' ) ) {
       my $hprms = $self->req->params->to_hash;
@@ -52,7 +56,7 @@ sub init {
       if ( %$ret ) {
         if ( @permit ) {
           foreach my $k ( keys %$ret ) {
-            delete $ret->{$k} if grep( !/$k/, @permit );
+            delete $ret->{$k} if grep( /\Q$k/, @permit );
           }
         }
 
@@ -90,5 +94,18 @@ Mojolicious::Plugin::AdvancedMod::HashedParams - Transformation request paramete
     # return all parameters in the hash
     $self->hparams();
   };
+
+=head1 AUTHOR
+
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2013, 2014
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut

@@ -3,7 +3,7 @@ package Mojolicious::Plugin::AdvancedMod::FormHelpers;
 sub multi_init {
   my ( $app, $helpers ) = @_;
 
-  $helpers->{bottom_to} = \&_botton_to;
+  $helpers->{botton_to} = \&_botton_to;
 }
 
 sub _botton_to {
@@ -69,5 +69,18 @@ Generates a form containing a single button that submits to the URL created by t
     <input name="password" type="hidden" value="q1w2e3">
     <input value="GoGo" type="submit" class="btn btn-sm" />
   </form>
+
+=head1 AUTHOR
+
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2013, 2014
+Grishkovelli L<grishkovelli@gmail.com>
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut
