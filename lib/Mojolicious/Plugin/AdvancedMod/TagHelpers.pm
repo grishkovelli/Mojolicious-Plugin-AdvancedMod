@@ -1,4 +1,4 @@
-package Mojolicious::Plugin::AdvancedMod::FormHelpers;
+package Mojolicious::Plugin::AdvancedMod::TagHelpers;
 
 sub multi_init {
   my ( $app, $helpers ) = @_;
@@ -39,24 +39,9 @@ sub _botton_to {
 
 =head1 NAME
 
-Mojolicious::Plugin::AdvancedMod::FormHelpers - Tag helpers plugin
-
-=head1 SYNOPSIS
-
-  # Mojolicious
-  $self->plugin('Mojolicious::Plugin::AdvancedMod');
-
-  # Mojolicious::Lite
-  plugin 'Mojolicious::Plugin::AdvancedMod';
-
-=head1 DESCRIPTION
-
-L<Mojolicious::Plugin::AdvancedMod::FormHelpers> is a collection of HTML tag helpers for
-L<Mojolicious>.
+Mojolicious::Plugin::AdvancedMod::TagHelpers - HTML tag helpers for L<Mojolicious>
 
 =head1 HELPERS
-
-L<Mojolicious::Plugin::AdvancedMod::FormHelpers> implements the following helpers.
 
 =head2 botton_to
 
@@ -72,14 +57,22 @@ Generates a form containing a single button that submits to the URL created by t
 
 =head1 AUTHOR
 
+=over 2
+
+=item
+
 Grishkovelli L<grishkovelli@gmail.com>
 
-=head1 COPYRIGHT
+=item
+
+https://github.com/grishkovelli/Mojolicious-Plugin-AdvancedMod
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2013, 2014
 Grishkovelli L<grishkovelli@gmail.com>
-
-=head1 LICENSE
 
 This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
