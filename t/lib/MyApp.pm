@@ -6,7 +6,7 @@ sub startup {
 
   $self->plugin( 'AdvancedMod' );
 
-  $self->configurator( file => 'etc/general.yml', include => 1 );
+  $self->configurator( file => 't/etc/general.yml', include => 1 );
 
   my $r = $self->routes;
   $r->namespaces( [ 'MyApp::Controllers', 'MyApp::Controllers::App' ] );

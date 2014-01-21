@@ -8,10 +8,10 @@ use Test::More;
 
 my $t = Test::Mojo->new( 'MyApp' );
 
-# Before
-$t->get_ok('/show')->content_like(qr/is_auth filter/);
-
 # After
 $t->get_ok('/')->content_like(qr/check_permissions filter/);
+
+# Before
+$t->get_ok('/show')->content_like(qr/is_auth filter/);
 
 done_testing();

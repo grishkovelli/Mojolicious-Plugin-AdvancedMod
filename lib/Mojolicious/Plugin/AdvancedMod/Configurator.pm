@@ -165,16 +165,8 @@ If your configuration has a file.(yml|json), Configurator replace the value of t
 
 Eval code
 
-=head1 SPECIAL NAMES
-
-If your configuration has B<static_path> or B<templates_path>, Configurator will make the:
-
-  push @{ $app->renderer->paths }, $conf->{templates_path}
-  push @{ $app->static->paths },   $conf->{static_path}
-
 =head1 SYNOPSIS
 
-  $self->plugin( 'Configurator' );
   ...
   $self->configurator(
     file => 'etc/conf.yml'
@@ -194,14 +186,22 @@ If your configuration has B<static_path> or B<templates_path>, Configurator will
 
 =head1 AUTHOR
 
+=over 2
+
+=item
+
 Grishkovelli L<grishkovelli@gmail.com>
 
-=head1 COPYRIGHT
+=item
+
+https://github.com/grishkovelli/Mojolicious-Plugin-AdvancedMod
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2013, 2014
 Grishkovelli L<grishkovelli@gmail.com>
-
-=head1 LICENSE
 
 This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

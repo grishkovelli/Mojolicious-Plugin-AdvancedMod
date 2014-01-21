@@ -5,7 +5,6 @@ use lib "$FindBin::Bin/lib";
 
 use Test::Mojo;
 use Test::More;
-use Data::Dumper;
 
 my $t = Test::Mojo->new( 'MyApp' );
 my $am_cfg = $t->app->defaults( 'am_config' );

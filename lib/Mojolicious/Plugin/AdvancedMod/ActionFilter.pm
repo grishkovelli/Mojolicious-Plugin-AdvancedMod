@@ -83,12 +83,7 @@ $self->action_filter( filter_name => sub { ... } );
   # Main app file
   sub startup {
     my $self = shift;
-
-    $self->plugin( 'Mojolicious::Plugin::ActionFilter' );
-    my $r = $self->routes;
-    $r->namespaces( [ 'MyApp::Controllers', 'MyApp::Controllers::App' ] );
-    $r->get( '/' )->to( 'app#index' );
-    $r->get( '/show' )->to( 'app#show' );
+    ...
     $self->action_filter(
       is_auth => sub { shift->render( text => "is_auth filter" ) },
       test    => sub { shift->render( text => "test before_filter" ); },
@@ -116,14 +111,22 @@ $self->action_filter( filter_name => sub { ... } );
 
 =head1 AUTHOR
 
+=over 2
+
+=item
+
 Grishkovelli L<grishkovelli@gmail.com>
 
-=head1 COPYRIGHT
+=item
+
+https://github.com/grishkovelli/Mojolicious-Plugin-AdvancedMod
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2013, 2014
 Grishkovelli L<grishkovelli@gmail.com>
-
-=head1 LICENSE
 
 This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

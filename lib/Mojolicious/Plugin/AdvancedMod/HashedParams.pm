@@ -80,8 +80,6 @@ Mojolicious::Plugin::AdvancedMod::HashedParams - Transformation request paramete
 
 =head1 SYNOPSIS
 
-  plugin 'HashedParams';
-
   # Transmit params:
   /route?message[body]=PerlOrDie&message[task][id]=32
     or
@@ -97,14 +95,22 @@ Mojolicious::Plugin::AdvancedMod::HashedParams - Transformation request paramete
 
 =head1 AUTHOR
 
+=over 2
+
+=item
+
 Grishkovelli L<grishkovelli@gmail.com>
 
-=head1 COPYRIGHT
+=item
+
+https://github.com/grishkovelli/Mojolicious-Plugin-AdvancedMod
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2013, 2014
 Grishkovelli L<grishkovelli@gmail.com>
-
-=head1 LICENSE
 
 This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
