@@ -1,7 +1,5 @@
 package Mojolicious::Command::am;
 
-our $VERSION = 0.02;
-
 use Mojo::Base 'Mojolicious::Command';
 use Mojo::Util qw(class_to_file class_to_path dumper slurp);
 
@@ -61,34 +59,35 @@ sub run {
 
 sub new_controller {
   my $self  = shift;
-  my $name  = shift;
   my %opts  = _cmd_opts_parsing( \@_ );
   my $class = ref $self->app;
 
   $opts{handler} ||= $self->app->renderer->default_handler;
   $opts{actions} ||= \@actions;
 
-  my $controller = "${class}::Controllers::$name";
-  $opts{ctrl} = $name;
-  $self->render_to_rel_file(
-    'controller',
-    "lib/" . ( class_to_path $controller ),
-    { class     => $controller,
-      actions   => $opts{actions},
-      copyright => $self->copyright( \%opts )
+  foreach my $name ( @_ ) {
+    my $controller = "${class}::Controllers::$name";
+    $self->render_to_rel_file(
+      'controller',
+      "lib/" . ( class_to_path $controller ),
+      { ctrl      => $name,
+        class     => $controller,
+        actions   => $opts{actions},
+        copyright => $self->copyright( \%opts )
+      }
+    );
+
+    my $helper = "${class}::Helpers::$name";
+    $self->render_to_rel_file(
+      'helper',
+      "lib/" . ( class_to_path $helper ),
+      { class => $helper, copyright => $self->copyright( \%opts ) }
+    );
+
+    foreach my $action ( @{ $opts{actions} } ) {
+      next if $action =~ /(create|update|destroy)/;
+      $self->write_rel_file( "templates/" . lc( $name ) . "/$action.html.$opts{handler}", "It's action #$action" );
     }
-  );
-
-  my $helper = "${class}::Helpers::$name";
-  $self->render_to_rel_file(
-    'helper',
-    "lib/" . ( class_to_path $helper ),
-    { class => $helper, copyright => $self->copyright( \%opts ) }
-  );
-
-  foreach my $action ( @{ $opts{actions} } ) {
-    next if $action =~ /(create|update|destroy)/;
-    $self->write_rel_file( "templates/" . lc( $name ) . "/$action.html.$opts{handler}", "It's action #$action" );
   }
 }
 
@@ -118,11 +117,11 @@ sub new_resource {
 
   foreach my $name ( @_ ) {
     my $controller = "${class}::Controllers::$name";
-    $opts{ctrl} = $name;
     $self->render_to_rel_file(
       'controller',
       "lib/" . ( class_to_path $controller ),
-      { class     => $controller,
+      { ctrl      => $name,
+        class     => $controller,
         actions   => \@actions,
         copyright => $self->copyright( \%opts )
       }
@@ -154,7 +153,9 @@ sub new_app {
   my $class = shift || 'TestApp';
   my %opts  = _cmd_opts_parsing( \@_ );
 
-  # ARGS list: handler, actions, plugins
+  # Add default resource
+  push @_, 'App';
+
   $opts{handler} ||= 'haml';
   $opts{actions} ||= \@actions;
   push @{ $opts{plugins} }, 'haml_renderer' if $opts{handler} eq 'haml';
@@ -183,41 +184,40 @@ EOF
     }
   );
 
-  # Controller
-  my $controller = "${class}::Controllers::App";
-  $opts{package} = $controller;
-  $opts{ctrl}    = 'app';
-  $self->render_to_rel_file(
-    'controller',
-    "$name/lib/" . ( class_to_path $controller ),
-    { class     => $controller,
-      actions   => $opts{actions},
-      copyright => $self->copyright( \%opts )
+  # Controllers, models, helpers, views
+  foreach my $resource ( @_ ) {
+    my $controller = "${class}::Controllers::$resource";
+    $opts{package} = $controller;
+    $self->render_to_rel_file(
+      'controller',
+      "$name/lib/" . ( class_to_path $controller ),
+      { ctrl      => $resource,
+        class     => $controller,
+        actions   => $opts{actions},
+        copyright => $self->copyright( \%opts )
+      }
+    );
+
+    my $model = "${class}::Models::$resource";
+    $opts{package} = $model;
+    $self->render_to_rel_file(
+      'model',
+      "$name/lib/" . ( class_to_path $model ),
+      { class => $model, copyright => $self->copyright( \%opts ) }
+    );
+
+    my $helper = "${class}::Helpers::$resource";
+    $opts{package} = $helper;
+    $self->render_to_rel_file(
+      'helper',
+      "$name/lib/" . ( class_to_path $helper ),
+      { class => $helper, copyright => $self->copyright( \%opts ) }
+    );
+
+    foreach my $action ( @{ $opts{actions} } ) {
+      next if $action =~ /(create|update|destroy)/;
+      $self->write_rel_file( "$name/templates/" . lc( $resource ) . "/$action.html.$opts{handler}", "It's action #$action" );
     }
-  );
-
-  # Model
-  my $model = "${class}::Models::App";
-  $opts{package} = $model;
-  $self->render_to_rel_file(
-    'model',
-    "$name/lib/" . ( class_to_path $model ),
-    { class => $model, copyright => $self->copyright( \%opts ) }
-  );
-
-  # Helper
-  my $helper = "${class}::Helpers::App";
-  $opts{package} = $helper;
-  $self->render_to_rel_file(
-    'helper',
-    "$name/lib/" . ( class_to_path $helper ),
-    { class => $helper, copyright => $self->copyright( \%opts ) }
-  );
-
-  # View's
-  foreach my $action ( @{ $opts{actions} } ) {
-    next if $action =~ /(create|update|destroy)/;
-    $self->write_rel_file( "$name/templates/app/$action.html.$opts{handler}", "It's action #$action" );
   }
 
   # Test
@@ -316,12 +316,12 @@ Usage: $0 COMMAND OPTION [ARGS]
     resource
 
   Arguments:
-    handler
+    handler #Default: haml
     plugins
     actions
     license
     author
-    year
+    year    #Default: 2014
     email
 
   Examples:

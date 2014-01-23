@@ -8,7 +8,7 @@ use Mojolicious::Plugin::AdvancedMod::TagHelpers;
 
 use DBI;
 
-our $VERSION = '0.35';
+our $VERSION = '0.37';
 
 sub register {
   my ( $plugin, $app, $conf ) = @_;
@@ -63,7 +63,7 @@ Mojolicious::Plugin::AdvancedMod - More buns for Mojolicious
 
 =head1 VERSION
 
-This documentation covers version 0.35 of Mojolicious::Plugin::AdvancedMod* released Jan, 2014
+This documentation covers version 0.37 of Mojolicious::Plugin::AdvancedMod* released Jan, 2014
 
 =head1 SYNOPSIS
 
