@@ -16,8 +16,8 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
-        #'ABC'              => 1.6,
-        #'Foo::Bar::Module' => 5.0401,
+        'Text::Haml'    => 0,
+        'DBI'           => 0,
     },
     meta_merge => {
         resources => {
