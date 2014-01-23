@@ -337,6 +337,24 @@ Usage: $0 COMMAND OPTION [ARGS]
 USAGE
 }
 
+=encoding utf8
+
+=head1 NAME
+
+Mojolicious::Command::am - Generic L<Mojolicious> app, controllers, models, helpers, views
+
+=head1 VERSION
+
+0.02
+
+=head1 SYNOPSIS
+
+  # If the application is not exist
+  mojo am
+
+  # If the application exist
+  ./script/my_app am
+
 =head1 AUTHOR
 
 Grishkovelli L<grishkovelli@gmail.com>
