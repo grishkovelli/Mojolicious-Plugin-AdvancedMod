@@ -14,6 +14,7 @@ sub register {
   my ( $plugin, $app, $conf ) = @_;
   my ( $helpers, %only ) = {};
 
+  # Mojolicious::Plugin::AdvancedMod::Authoriz::init( $app, $helpers );
   Mojolicious::Plugin::AdvancedMod::ActionFilter::init( $app, $helpers );
   Mojolicious::Plugin::AdvancedMod::Configurator::init( $app, $helpers );
   Mojolicious::Plugin::AdvancedMod::HashedParams::init( $app, $helpers );
