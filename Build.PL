@@ -5,7 +5,7 @@ use Module::Build;
 
 my $builder = Module::Build->new(
     module_name         => 'Mojolicious::Plugin::AdvancedMod',
-    license             => 'Perl_5',
+    license             => 'perl',
     dist_author         => q{Grishkovelli <grishkovelli@gmail.com>},
     dist_version_from   => 'lib/Mojolicious/Plugin/AdvancedMod.pm',
     release_status      => 'stable',
