@@ -1,10 +1,6 @@
 package Mojolicious::Plugin::AdvancedMod;
 use Mojo::Base 'Mojolicious::Plugin';
-
-use Mojolicious::Plugin::AdvancedMod::ActionFilter;
-use Mojolicious::Plugin::AdvancedMod::HashedParams;
-use Mojolicious::Plugin::AdvancedMod::Configurator;
-use Mojolicious::Plugin::AdvancedMod::TagHelpers;
+use List::Util 'any';
 
 use DBI;
 
@@ -14,11 +10,28 @@ sub register {
   my ( $plugin, $app, $conf ) = @_;
   my ( $helpers, %only ) = {};
 
+  # $conf args: forget_mods, forget_helpers, only_mods, only_helpers
+
+  my %available_mods = (
+    ActionFilter => 1,
+    Configurator => 1,
+    HashedParams => 1,
+    TagHelpers   => 1,
+    Authoriz     => 0,
+  );
+
+  foreach my $mod ( keys %available_mods ) {
+    next unless $available_mods{$mod};
+    next if any { $_ eq lc( $mod ) } @{ $conf->{forget_mods} };
+
+    eval "use Mojolicious::Plugin::$mod;";
+  }
+
   # Mojolicious::Plugin::AdvancedMod::Authoriz::init( $app, $helpers );
-  Mojolicious::Plugin::AdvancedMod::ActionFilter::init( $app, $helpers );
-  Mojolicious::Plugin::AdvancedMod::Configurator::init( $app, $helpers );
-  Mojolicious::Plugin::AdvancedMod::HashedParams::init( $app, $helpers );
-  Mojolicious::Plugin::AdvancedMod::TagHelpers::multi_init( $app, $helpers );
+  # Mojolicious::Plugin::AdvancedMod::ActionFilter::init( $app, $helpers );
+  # Mojolicious::Plugin::AdvancedMod::Configurator::init( $app, $helpers );
+  # Mojolicious::Plugin::AdvancedMod::HashedParams::init( $app, $helpers );
+  # Mojolicious::Plugin::AdvancedMod::TagHelpers::multi_init( $app, $helpers );
 
   # add helper's
   if ( $conf->{only} ) {
