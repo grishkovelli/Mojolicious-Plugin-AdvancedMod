@@ -343,10 +343,6 @@ USAGE
 
 Mojolicious::Command::am - Generic L<Mojolicious> app, controllers, models, helpers, views
 
-=head1 VERSION
-
-0.02
-
 =head1 SYNOPSIS
 
   # If the application is not exist
