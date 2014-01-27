@@ -1,12 +1,12 @@
 package Mojolicious::Plugin::AdvancedMod::TagHelpers;
 
-sub multi_init {
+sub init {
   my ( $app, $helpers ) = @_;
 
-  $helpers->{botton_to} = \&_botton_to;
+  $helpers->{button_to} = \&_button_to;
 }
 
-sub _botton_to {
+sub _button_to {
   my ( $self, $submit_value ) = ( shift, shift );
   my %opt = @_;
 
@@ -43,9 +43,9 @@ Mojolicious::Plugin::AdvancedMod::TagHelpers - HTML tag helpers for L<Mojoliciou
 
 =head1 HELPERS
 
-=head2 botton_to
+=head2 button_to
 
-  = botton_to 'GoGo', 'action' => '/api', 'class' => 'foo bar', 'data' => [qw/user root password q1w2e3/], 'submit_class' => 'btn btn-sm'
+  = button_to 'GoGo', 'action' => '/api', 'class' => 'foo bar', 'data' => [qw/user root password q1w2e3/], 'submit_class' => 'btn btn-sm'
 
 Generates a form containing a single button that submits to the URL created by the set of options.
 
