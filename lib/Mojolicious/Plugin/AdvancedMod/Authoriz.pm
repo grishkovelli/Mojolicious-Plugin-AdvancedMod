@@ -1,6 +1,10 @@
 package Mojolicious::Plugin::AdvancedMod::Authoriz;
 use Mojo::Base 'Mojolicious::Plugin';
 
+
+
+1;
+
 =encoding utf8
 
 =head1 NAME

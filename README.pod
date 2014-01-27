@@ -6,11 +6,29 @@ Mojolicious::Plugin::AdvancedMod - More buns for Mojolicious
 
 =head1 VERSION
 
-This documentation covers version 0.37 of Mojolicious::Plugin::AdvancedMod* released Jan, 2014
+This documentation covers version 0.38 of Mojolicious::Plugin::AdvancedMod* released Jan, 2014
 
 =head1 SYNOPSIS
 
 $self->plugin('AdvancedMod');
+
+=head1 ARGS
+
+=head2 skip_mods
+
+  Skip selected modules
+
+=head2 skip_helpers
+
+  Skip selected helpers
+
+=head2 only_mods (dev)
+
+  Load selected modules, other skipped
+
+=head2 only_helpers (dev)
+
+  Load selected helpers, other skipped
 
 =head1 SEE ALSO
 

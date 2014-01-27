@@ -1,37 +1,51 @@
 package Mojolicious::Plugin::AdvancedMod;
-use Mojo::Base 'Mojolicious::Plugin';
-use List::Util 'any';
+
+our $VERSION = '0.38';
 
 use DBI;
-
-our $VERSION = '0.37';
+use List::Util 'any';
+use Mojo::Base 'Mojolicious::Plugin';
+use Data::Dumper;
+our $AVAILABLE_MODS = {
+  ActionFilter => 1,
+  Configurator => 1,
+  HashedParams => 1,
+  TagHelpers   => 1,
+  Authoriz     => 0,
+  Fake         => 1
+};
 
 sub register {
   my ( $plugin, $app, $conf ) = @_;
   my ( $helpers, %only ) = {};
 
-  # $conf args: forget_mods, forget_helpers, only_mods, only_helpers
+  foreach my $mod ( keys %$AVAILABLE_MODS ) {
+    unless( $AVAILABLE_MODS->{$mod} ) {
+      $app->log->debug( "** AdvancedMod $mod disable" );
+      next;
+    }
 
-  my %available_mods = (
-    ActionFilter => 1,
-    Configurator => 1,
-    HashedParams => 1,
-    TagHelpers   => 1,
-    Authoriz     => 0,
-  );
+    if ( $conf->{only_mods} ) {
+      unless ( any { lc( $_ ) eq lc( $mod ) } @{ $conf->{only_mods} } ) {
+        $app->log->debug( "** AdvancedMod skipped $mod" );
+        next;
+      }
+    }
+    elsif ( $conf->{skip_mods} ) {
+      if ( any { lc( $mod ) eq lc( $_ ) } @{ $conf->{skip_mods} } ) {
+        $app->log->debug( "** AdvancedMod skipped $mod" );
+        next;
+      }
+    }
 
-  foreach my $mod ( keys %available_mods ) {
-    next unless $available_mods{$mod};
-    next if any { $_ eq lc( $mod ) } @{ $conf->{forget_mods} };
+    eval "use Mojolicious::Plugin::AdvancedMod::$mod;";
 
-    eval "use Mojolicious::Plugin::$mod;";
+    # $app->defaults( { am_config => { errors => $@ } } ) if $@;
+
+    unless ( $@ ) {
+      eval 'Mojolicious::Plugin::AdvancedMod::' . $mod . '::init( $app, $helpers );';
+    }
   }
-
-  # Mojolicious::Plugin::AdvancedMod::Authoriz::init( $app, $helpers );
-  # Mojolicious::Plugin::AdvancedMod::ActionFilter::init( $app, $helpers );
-  # Mojolicious::Plugin::AdvancedMod::Configurator::init( $app, $helpers );
-  # Mojolicious::Plugin::AdvancedMod::HashedParams::init( $app, $helpers );
-  # Mojolicious::Plugin::AdvancedMod::TagHelpers::multi_init( $app, $helpers );
 
   # add helper's
   if ( $conf->{only} ) {
@@ -77,11 +91,29 @@ Mojolicious::Plugin::AdvancedMod - More buns for Mojolicious
 
 =head1 VERSION
 
-This documentation covers version 0.37 of Mojolicious::Plugin::AdvancedMod* released Jan, 2014
+This documentation covers version 0.38 of Mojolicious::Plugin::AdvancedMod* released Jan, 2014
 
 =head1 SYNOPSIS
 
 $self->plugin('AdvancedMod');
+
+=head1 ARGS
+
+=head2 skip_mods
+
+  Skip selected modules
+
+=head2 skip_helpers
+
+  Skip selected helpers
+
+=head2 only_mods (dev)
+
+  Load selected modules, other skipped
+
+=head2 only_helpers (dev)
+
+  Load selected helpers, other skipped
 
 =head1 SEE ALSO
 
