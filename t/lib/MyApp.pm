@@ -4,7 +4,9 @@ use Mojo::Base 'Mojolicious';
 sub startup {
   my $self = shift;
 
-  $self->plugin( 'AdvancedMod', skip_mods => [qw/Fake/] );
+  my %am_cfg = ( skip_mods => [qw/Fake/] );
+
+  $self->plugin( 'AdvancedMod', %am_cfg );
 
   $self->configurator( file => 't/etc/general.yml', include => 1 );
 

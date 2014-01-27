@@ -14,7 +14,7 @@ my $t              = Test::Mojo->new( 'MyApp' );
 my $available_mods = eval "\$$root_namespace" . "::AVAILABLE_MODS";
 
 foreach my $mod ( keys %$available_mods ) {
-  unless( $available_mods->{$mod} ) {
+  if( !$available_mods->{$mod} || $mod =~ /Fake/ ) {
     diag "$root_namespace::$mod ... Skipped";
     next;
   }
@@ -22,7 +22,7 @@ foreach my $mod ( keys %$available_mods ) {
   my $key = "$root_namespace/$mod.pm";
   $key =~ s/::/\//g;
 
-  ok exists $INC{$key}, "$root_namespace::$mod ... Loaded";
+ ok exists $INC{$key}, "$root_namespace::$mod ... Loaded";
 }
 
 ok !exists $INC{'Mojolicious/Plugin/AdvancedMod/Fake.pm'}, "Mojolicious::Plugin::AdvancedMod::Fake ... Skipped";
