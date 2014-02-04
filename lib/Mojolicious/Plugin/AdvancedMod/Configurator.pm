@@ -41,15 +41,22 @@ sub init {
 
       push @{ $self->app->renderer->paths }, $conf->{templates_path} if $conf->{templates_path};
       push @{ $self->app->static->paths },   $conf->{static_path}    if $conf->{static_path};
+
+      $conf = _encapsulate( $conf );
+
+      $self->app->secrets( $conf->{secrets} ) if $conf->{secrets};
+      $self->app->log->debug( "** Configurator config: " . Mojo::JSON->new->encode( $conf ) );
+
+      # create db_* helper's
+      foreach my $k ( keys %$conf ) {
+        if ( $k eq 'db' || $k =~ /^db_\w+$/ ) {
+          $helpers->{$k} = sub { return DBI->connect( @{ $conf->{$k} }{qw/ dsn user password options /} ); };
+          $self->app->log->debug( "** Configurator detected db helper: $k" );
+        }
+      }
     }
 
-    $conf = _encapsulate( $conf );
-
     $self->app->defaults( am_config => $conf );
-    # add old key
-    $self->app->defaults( switch_config => $conf );
-
-    $self->app->log->debug( "** Configurator config: " . Mojo::JSON->new->encode( $conf ) );
 
     if ( $conf->{_err} ) {
       $self->app->log->error( "** Configurator error: " . $conf->{_err} );
@@ -58,8 +65,6 @@ sub init {
 
     return 1;
   };
-  # add old alias
-  $helpers->{switch_config} = $helpers->{configurator};
 }
 
 sub _load_package {
@@ -118,7 +123,7 @@ sub _load_file {
   return $ret;
 }
 
-# Decoding example: 'dbi:Pg:dbname=${development.db_slave.dbname};host=${development.db_slave.host};port=${development.db_slave.port}'
+# Example: 'dbi:Pg:dbname=${development.db_slave.dbname};host=${development.db_slave.host};port=${development.db_slave.port}'
 sub _encapsulate {
   my $conf       = shift;
   my $plain_dump = Dumper $conf;

@@ -385,6 +385,7 @@ use Mojo::Base 'Mojolicious';
 sub startup {
   my $self = shift;
 
+  $self->plugin( 'AdvancedMod', skip_mods => [qw/ Fake /] );
   % if( $h->{plugins} ) {
       % foreach my $p ( @{ $h->{plugins} } ) {
   $self->plugin('<%= $p %>');

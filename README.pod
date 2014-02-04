@@ -10,7 +10,7 @@ This documentation covers version 0.38 of Mojolicious::Plugin::AdvancedMod* rele
 
 =head1 SYNOPSIS
 
-$self->plugin('AdvancedMod');
+$self->plugin('AdvancedMod', skip_mods => qw/taghelpers/);
 
 =head1 ARGS
 
@@ -26,15 +26,11 @@ $self->plugin('AdvancedMod');
 
   Load selected modules, other skipped
 
-=head2 only_helpers (dev)
-
-  Load selected helpers, other skipped
-
 =head1 SEE ALSO
 
 =head2 L<Mojolicious::Plugin::AdvancedMod>
 
-Load all AdvancedMod::*. Auto-generation database helpers's if config exist C<db_*> 
+Load all AdvancedMod plugins
 
 =head2 L<Mojolicious::Plugin::AdvancedMod::ActionFilter>
 
@@ -46,7 +42,7 @@ Transformation request parameters into a hash and multi-hash
 
 =head2 L<Mojolicious::Plugin::AdvancedMod::Configurator>
 
-Load YAML/JSON config, encapsulation, change 'templates_path' && 'static_path' by MOJO_MODE/config. 
+Load YAML/JSON config, encapsulation, create a db helpers, change 'templates_path' && 'static_path' by MOJO_MODE/config. 
 
 =head2 L<Mojolicious::Plugin::AdvancedMod::TagHelpers>
 

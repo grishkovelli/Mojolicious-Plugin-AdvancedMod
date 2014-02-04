@@ -1,46 +1,45 @@
 package Mojolicious::Plugin::AdvancedMod;
-
 our $VERSION = '0.38';
 
 use DBI;
 use List::Util 'any';
 use Mojo::Base 'Mojolicious::Plugin';
-use Data::Dumper;
+
 our $AVAILABLE_MODS = {
   ActionFilter => 1,
   Configurator => 1,
   HashedParams => 1,
   TagHelpers   => 1,
   Authoriz     => 0,
-  Fake         => 1
+  Fake         => 1 # for only test
 };
 
 sub register {
   my ( $plugin, $app, $conf ) = @_;
-  my ( $helpers, %only ) = {};
+  my $helpers = {};
 
   foreach my $mod ( keys %$AVAILABLE_MODS ) {
-    unless( $AVAILABLE_MODS->{$mod} ) {
-      $app->log->debug( "** AdvancedMod $mod disable" );
+    unless ( $AVAILABLE_MODS->{$mod} ) {
+      $app->log->debug( "** AdvancedMod $mod disable pm" );
       next;
     }
 
     if ( $conf->{only_mods} ) {
       unless ( any { lc( $_ ) eq lc( $mod ) } @{ $conf->{only_mods} } ) {
-        $app->log->debug( "** AdvancedMod skipped $mod" );
+        $app->log->debug( "** AdvancedMod skipped $mod pm" );
         next;
       }
     }
     elsif ( $conf->{skip_mods} ) {
       if ( any { lc( $mod ) eq lc( $_ ) } @{ $conf->{skip_mods} } ) {
-        $app->log->debug( "** AdvancedMod skipped $mod" );
+        $app->log->debug( "** AdvancedMod skipped $mod pm" );
         next;
       }
     }
 
     eval "use Mojolicious::Plugin::AdvancedMod::$mod;";
 
-    # $app->defaults( { am_config => { errors => $@ } } ) if $@;
+    $app->defaults( { am_config => { errors => $@ } } ) if $@;
 
     unless ( $@ ) {
       eval 'Mojolicious::Plugin::AdvancedMod::' . $mod . '::init( $app, $helpers );';
@@ -48,36 +47,13 @@ sub register {
   }
 
   # add helper's
-  if ( $conf->{only} ) {
-    %only = map { $_ => 1 } @{ $conf->{only} };
-  }
-
   foreach my $h ( keys %$helpers ) {
-    if ( %only && !exists $only{$h} ) {
-      delete $helpers->{$h};
+    if ( any { lc( $h ) eq lc( $_ ) } @{ $conf->{skip_helpers} } ) {
+      $app->log->debug( "** AdvancedMod skipped $h helper" );
       next;
     }
     $app->helper( $h => $helpers->{$h} );
-    $app->log->debug( "** AdvancedMod load $h" );
-  }
-
-  # by am_config
-  if ( $app->defaults( 'am_config' ) ) {
-    my $am_cfg = $app->defaults( 'am_config' );
-
-    # add db helper's
-    foreach my $k ( keys %$am_cfg ) {
-      if ( $k eq 'db' || $k =~ /^db_\w+$/ ) {
-        $app->helper(
-          $k => sub {
-            return DBI->connect( @{ $am_cfg->{$k} }{qw/ dsn user password options /} );
-          }
-        );
-      }
-    }
-
-    # change 'secrets' key
-    $app->secrets( $am_cfg->{secrets} ) if $am_cfg->{secrets};
+    $app->log->debug( "** AdvancedMod added $h helper" );
   }
 }
 
@@ -91,11 +67,11 @@ Mojolicious::Plugin::AdvancedMod - More buns for Mojolicious
 
 =head1 VERSION
 
-This documentation covers version 0.38 of Mojolicious::Plugin::AdvancedMod* released Jan, 2014
+This documentation covers version 0.39 of Mojolicious::Plugin::AdvancedMod released Feb, 2014
 
 =head1 SYNOPSIS
 
-$self->plugin('AdvancedMod');
+$self->plugin('AdvancedMod', skip_mods => qw/taghelpers/);
 
 =head1 ARGS
 
@@ -111,15 +87,11 @@ $self->plugin('AdvancedMod');
 
   Load selected modules, other skipped
 
-=head2 only_helpers (dev)
-
-  Load selected helpers, other skipped
-
 =head1 SEE ALSO
 
 =head2 L<Mojolicious::Plugin::AdvancedMod>
 
-Load all AdvancedMod::*. Auto-generation database helpers's if config exist C<db_*> 
+Load all AdvancedMod plugins
 
 =head2 L<Mojolicious::Plugin::AdvancedMod::ActionFilter>
 
@@ -131,7 +103,7 @@ Transformation request parameters into a hash and multi-hash
 
 =head2 L<Mojolicious::Plugin::AdvancedMod::Configurator>
 
-Load YAML/JSON config, encapsulation, change 'templates_path' && 'static_path' by MOJO_MODE/config. 
+Load YAML/JSON config, encapsulation, create a db helpers, change 'templates_path' && 'static_path' by MOJO_MODE/config. 
 
 =head2 L<Mojolicious::Plugin::AdvancedMod::TagHelpers>
 
