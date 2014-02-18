@@ -10,8 +10,7 @@ our $AVAILABLE_MODS = {
   Configurator => 1,
   HashedParams => 1,
   TagHelpers   => 1,
-  Authoriz     => 0,
-  Fake         => 1 # for only test
+  Authoriz     => 0
 };
 
 sub register {
@@ -20,19 +19,19 @@ sub register {
 
   foreach my $mod ( keys %$AVAILABLE_MODS ) {
     unless ( $AVAILABLE_MODS->{$mod} ) {
-      $app->log->debug( "** AdvancedMod $mod disable pm" );
+      $app->log->debug( "** AdvancedMod disable $mod.pm" );
       next;
     }
 
     if ( $conf->{only_mods} ) {
       unless ( any { lc( $_ ) eq lc( $mod ) } @{ $conf->{only_mods} } ) {
-        $app->log->debug( "** AdvancedMod skipped $mod pm" );
+        $app->log->debug( "** AdvancedMod skipped $mod.pm" );
         next;
       }
     }
     elsif ( $conf->{skip_mods} ) {
       if ( any { lc( $mod ) eq lc( $_ ) } @{ $conf->{skip_mods} } ) {
-        $app->log->debug( "** AdvancedMod skipped $mod pm" );
+        $app->log->debug( "** AdvancedMod skipped $mod.pm" );
         next;
       }
     }

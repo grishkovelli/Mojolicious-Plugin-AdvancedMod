@@ -44,7 +44,7 @@ sub init {
 
       $conf = _encapsulate( $conf );
 
-      $self->app->secrets( $conf->{secrets} ) if $conf->{secrets};
+      $self->app->secrets( [ $conf->{secrets} ] ) if $conf->{secrets};
       $self->app->log->debug( "** Configurator config: " . Mojo::JSON->new->encode( $conf ) );
 
       # create db_* helper's
