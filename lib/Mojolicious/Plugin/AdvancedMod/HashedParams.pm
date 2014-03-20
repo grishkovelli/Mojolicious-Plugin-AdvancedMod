@@ -26,7 +26,10 @@ sub init {
           push @list, $n if length( $n ) > 0;
         }
 
-        map $array[$index] .= "{$list[$_]}", 0 .. $#list;
+        foreach my $i ( 0 .. $#list ) {
+          $list[$i] =~ s/'/\\'/g;
+          $array[$index] .= "{'$list[$i]'}";
+        }
 
         if ( ref( $val ) ne 'ARRAY' ) {
           $array[$index] .= " = '$val';";
@@ -49,7 +52,7 @@ sub init {
 
       if ( $@ ) {
         $self->stash( hparams       => {} );
-        $self->stash( hparams_error => $@ );
+        $self->stash( hparams_error => "Error: $@ ;; Eval: $code" );
         return $self->stash( 'hparams' );
       }
 
@@ -67,7 +70,7 @@ sub init {
       $self->stash( hparams => {} );
     }
     return $self->stash( 'hparams' );
-  }
+      }
 }
 
 1;
