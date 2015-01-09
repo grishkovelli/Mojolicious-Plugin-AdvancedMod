@@ -131,7 +131,7 @@ sub _encapsulate {
   $plain_dump =~ s/^\$VAR1 = //;
   $plain_dump =~ s/(development|production|overall)\.//gs;
 
-  while ( $plain_dump =~ /(\${.*?})/gs ) {
+  while ( $plain_dump =~ /(\$\{.*?\})/gs ) {
     my $collocation = $1;
 
     my $copy      = $collocation;
