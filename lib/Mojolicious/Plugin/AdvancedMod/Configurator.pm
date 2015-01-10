@@ -1,5 +1,6 @@
 package Mojolicious::Plugin::AdvancedMod::Configurator;
 use Data::Dumper;
+use Mojo::JSON qw(encode_json);
 
 sub init {
   my $app     = shift;
@@ -26,7 +27,7 @@ sub init {
       if ( $args{eval} && $args{eval}{$mode} ) {
         my $ret = eval $args{eval}{$mode}{code};
 
-        if ( $@ ) {
+        if ( $ @) {
           $conf->{_err} = $@;
         }
         else {
@@ -45,7 +46,7 @@ sub init {
       $conf = _encapsulate( $conf );
 
       $self->app->secrets( [ $conf->{secrets} ] ) if $conf->{secrets};
-      $self->app->log->debug( "** Configurator config: " . Mojo::JSON->new->encode( $conf ) );
+      $self->app->log->debug( "** Configurator config: " . encode_json( $conf ) );
 
       # create db_* helper's
       foreach my $k ( keys %$conf ) {
@@ -79,8 +80,8 @@ sub _load_package {
     if ( !$@ ) {
       my $ret = $pkg . "::";
       if ( $pkg =~ /^YAML/ ) { $ret .= 'Load'; }
-      elsif ( grep( /^$pkg$/, qw/JSON::XS JSON/ ) ) { $ret .= 'decode_json'; }
-      else                                          { $ret .= 'decode'; }
+      elsif ( grep( /^$pkg$/, qw/JSON::XS JSON Mojo::JSON/ ) ) { $ret .= 'decode_json'; }
+      else                                                     { $ret .= 'decode'; }
       return { err => 0, name => $ret };
     }
   }
